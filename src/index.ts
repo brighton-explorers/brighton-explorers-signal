@@ -84,7 +84,7 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
   if (
     existingGroup.permissionAddMember !== "ONLY_ADMINS" ||
     existingGroup.permissionEditDetails !== "ONLY_ADMINS" ||
-    existingGroup.groupInviteLink
+    existingGroup.groupInviteLink == null
   ) {
     console.log(`Updating group permissions for "${groupName}" (${group.id})`);
     if (!DRY_RUN) {
@@ -94,7 +94,7 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
             setPermissionAddMember: "only-admins",
             setPermissionEditDetails: "only-admins",
           },
-          link: "disabled",
+          link: "enabled",
         });
       } catch (error) {
         console.error(
