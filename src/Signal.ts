@@ -1,5 +1,5 @@
 import { ChildProcessWithoutNullStreams, execSync, spawn } from "child_process";
-import { DEBUG } from "./env.js";
+import { DEBUG, TRACE } from "./env.js";
 import { JSONRPCClient } from "json-rpc-2.0";
 import * as readline from "readline";
 import EventEmitter from "events";
@@ -113,14 +113,17 @@ export default class SignalCli {
    * (e.g. with ~85 numbers we get this error for most calls to `getUserStatus` when running every 4 hours)
    */
   private async getUserStatus(...numbers: string[]) {
+    TRACE && console.log("getUserStatus()");
     return (await this.rpcClient.request("getUserStatus", { recipient: numbers })) as SignalMemberStatus[];
   }
 
   public async sendMessage(recipient: string, message: string) {
+    TRACE && console.log("sendMessage()");
     return await this.withTimeout(this.rpcClient.request("send", { recipient, message }));
   }
 
   public async listGroups() {
+    TRACE && console.log("listGroups()");
     return (await this.rpcClient.request("listGroups", {})) as SignalGroup[];
   }
 
@@ -136,20 +139,24 @@ export default class SignalCli {
       link?: SignalGroupLinkState;
     }
   ) {
+    TRACE && console.log("setGroupPermissions()");
     return (await this.withTimeout(this.rpcClient.request("updateGroup", { groupId, ...options }))) as SignalGroup[];
   }
 
   public async resetGroupLink(groupId: string) {
+    TRACE && console.log("resetGroupLink()");
     return (await this.withTimeout(
       this.rpcClient.request("updateGroup", { groupId, resetLink: true })
     )) as SignalGroup[];
   }
 
   public async sendReceipt(number: string, targetTimestamp: number, type: "read" | "viewed" = "read") {
+    TRACE && console.log("sendReceipt()");
     return await this.withTimeout(this.rpcClient.request("sendReceipt", { recipient: number, targetTimestamp, type }));
   }
 
   public async createGroup(name: string, adminNumbers: string[]) {
+    TRACE && console.log("createGroup()");
     if (adminNumbers.length === 0) {
       console.warn(`No numbers to add to new group "${name}"`);
       return;
@@ -168,6 +175,7 @@ export default class SignalCli {
    * Ignores numbers that are not registered on Signal
    */
   public async addNumbersToGroup(groupId: string, members: string[]) {
+    TRACE && console.log("addNumbersToGroup()");
     if (members.length === 0) {
       console.warn(`No numbers to add to group ${groupId}`);
       return;
@@ -208,6 +216,7 @@ export default class SignalCli {
   }
 
   public async removeNumbersFromGroup(groupId: string, removeMembers: string[]) {
+    TRACE && console.log("removeNumbersFromGroup()");
     if (removeMembers.length === 0) {
       console.warn(`No numbers to remove from group ${groupId}`);
       return;
@@ -226,6 +235,7 @@ export default class SignalCli {
   }
 
   private spawnSignalCli() {
+    TRACE && console.log("spawnSignalCli()");
     const signalCliProcess = spawn(SIGNAL_CLI, [...SIGNAL_CLI_ARGS, "jsonRpc", "--receive-mode=on-start"]);
 
     signalCliProcess.addListener("exit", (code) => {
@@ -243,6 +253,7 @@ export default class SignalCli {
   }
 
   private setupRpcClient(signalCliProcess: ChildProcessWithoutNullStreams) {
+    TRACE && console.log("setupRpcClient()");
     const rpcClient = new JSONRPCClient(async (request) => {
       DEBUG && console.log("signal-cli request", request);
       signalCliProcess.stdin.write(JSON.stringify(request));
@@ -280,5 +291,6 @@ export default class SignalCli {
 }
 
 export function getSignalNumber(user: SignalMemberStatus) {
+  TRACE && console.log("getSignalNumber()");
   return user.isRegistered ? user.number : null;
 }

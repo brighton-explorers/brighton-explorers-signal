@@ -1,6 +1,6 @@
 import "log-timestamp";
 import { argv } from "process";
-import { DEBUG, DRY_RUN } from "./env.js";
+import { DEBUG, DRY_RUN, TRACE } from "./env.js";
 import { getActiveUsers, MyClubhouseActivity, MyClubhouseUser } from "./myclubhouse.js";
 import { normalizePhoneNumber } from "./phoneNumbers.js";
 import Signal, { getSignalNumber, SIGNAL_USER } from "./Signal.js";
@@ -69,6 +69,7 @@ function userPhoneNumber(user: MyClubhouseUser) {
 }
 
 async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS, expectedNumbers: string[]) {
+  TRACE && console.log("setupGroup()");
   console.log(`👯 "${groupName}" - ${expectedNumbers.length} member(s)`);
 
   const group = SIGNAL_GROUPS[groupName];
@@ -142,6 +143,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
   DEBUG && console.log("🪲 Debug mode. PII may be shown on the console.");
   DRY_RUN && console.log("🧪 Dry-run mode, not making any changes.");
   (DEBUG || DRY_RUN) && console.log("");
+  TRACE && console.log("syncGroups()");
 
   const signal = new Signal();
 
