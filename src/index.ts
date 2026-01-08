@@ -87,13 +87,20 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
   ) {
     console.log(`Updating group permissions for "${groupName}" (${group.id})`);
     if (!DRY_RUN) {
-      await signal.setGroupPermissions(group.id, {
-        permissions: {
-          setPermissionAddMember: "only-admins",
-          setPermissionEditDetails: "only-admins",
-        },
-        link: "disabled",
-      });
+      try{
+        await signal.setGroupPermissions(group.id, {
+          permissions: {
+            setPermissionAddMember: "only-admins",
+            setPermissionEditDetails: "only-admins",
+          },
+          link: "disabled",
+        });
+      } catch (error) {
+        console.error(
+          `Could not set group permissions for ${groupName}:`,
+          error
+        );
+      }
     }
   }
 
