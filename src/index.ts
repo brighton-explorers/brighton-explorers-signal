@@ -94,7 +94,7 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
             setPermissionAddMember: "only-admins",
             setPermissionEditDetails: "only-admins",
           },
-          link: "enabled-with-approval",
+          link: "enabled",
         });
       } catch (error) {
         console.error(
