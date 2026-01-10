@@ -80,11 +80,11 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
   }
 
   // Set group permissions
-  TRACE && console.log(`existingGroup: name=${existingGroup.name} permissionAddMember=${existingGroup.permissionAddMember}, permissionEditDetails=${existingGroup.permissionEditDetails}, groupInviteLink=${existingGroup.groupInviteLink}`);
+  TRACE && console.log(`existingGroup: name=${existingGroup.name} permissionAddMember=${existingGroup.permissionAddMember}, permissionEditDetails=${existingGroup.permissionEditDetails}, groupInviteLink=${existingGroup.groupInviteLink==null ? "null":"valid"}`);
   if (
     existingGroup.permissionAddMember !== "ONLY_ADMINS" ||
     existingGroup.permissionEditDetails !== "ONLY_ADMINS" ||
-    existingGroup.groupInviteLink != "enabled-with-approval"
+    existingGroup.groupInviteLink == null
   ) {
     console.log(`Updating group permissions for "${groupName}" (${group.id})`);
     if (!DRY_RUN) {
