@@ -273,7 +273,7 @@ export default class SignalCli {
     return rpcClient;
   }
 
-  private async withTimeout<T>(promise: PromiseLike<T>, timeoutDuration: number = 5000): Promise<T> {
+  private async withTimeout<T>(promise: PromiseLike<T>, timeoutDuration: number = 2000): Promise<T> {
     let timeout: NodeJS.Timeout;
 
     return Promise.race([
