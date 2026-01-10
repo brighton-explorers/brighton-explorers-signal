@@ -205,6 +205,12 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
       // If the number was not on Signal for a previous group don't try to add it again
       .filter((number) => !numbersNotOnSignal.has(number));
 
+      // list membership numbers for deugging
+      for(const user of groupUsers)
+      {
+        TRACE && console.log(`${user.MembershipNumber}`);
+      }
+
     const { numbersRemoved, unregisteredNumbers } = await setupGroup(signal, groupName, groupNumbers);
     numbersRemoved.forEach((number) => numbersRemovedFromGroups.add(number));
     unregisteredNumbers.forEach((number) => numbersNotOnSignal.add(number));
