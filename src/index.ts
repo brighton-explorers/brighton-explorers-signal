@@ -68,11 +68,6 @@ function userPhoneNumber(user: MyClubhouseUser) {
   return number ? normalizePhoneNumber(number) : null;
 }
 
-function userPhoneNumberAndId(user: MyClubhouseUser) : [any, string] {
-  const number = user.MobileTelephone || user.HomeTelephone || user.BusinessTelephone;
-  return [number ? normalizePhoneNumber(number) : null, user.MembershipNumber];
-}
-
 async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS, expectedNumbers: string[], groupIDsByNumber: Map<string, string>) {
   TRACE && console.log("setupGroup()");
   console.log(`👯 "${groupName}" - ${expectedNumbers.length} member(s)`);
