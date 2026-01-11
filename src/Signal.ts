@@ -197,6 +197,7 @@ export default class SignalCli {
         try {
           await new Promise((resolve) => setTimeout(resolve, 250)); // Avoid rate limiting
           await this.withTimeout(this.rpcClient.request("updateGroup", { groupId, members: [memberNumber] }));
+          TRACE && console.log(`Added member ${i + 1}/${members.length} [${groupIDsByNumber.get(memberNumber)}] to group ${groupId}`);
         } catch (error) {
           const message = (error as Error).message;
           console.warn(
