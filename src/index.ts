@@ -132,7 +132,7 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
   }
   else
   {
-    console.log(`No numbers to remove from group "${groupName} (${group.id})"`);
+    console.log(`No numbers to remove from group "${groupName}" (${group.id})`);
   }
 
   let unregisteredNumbers = new Set<string>();
