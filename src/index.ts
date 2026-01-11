@@ -125,10 +125,14 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
 
   if (numbersRemoved.length > 0) {
     console.log(
-      `Removing old numbers from group "${groupName}" (${group.id})`,
+      `Removing ${DEBUG ? numbersRemoved : numbersRemoved.length} numbers from group "${groupName}" (${group.id})`,
       DEBUG ? numbersRemoved : numbersRemoved.length
     );
     !DRY_RUN && (await signal.removeNumbersFromGroup(group.id, numbersRemoved));
+  }
+  else
+  {
+    console.log(`No numbers to remove from group "${groupName} (${group.id})"`);
   }
 
   let unregisteredNumbers = new Set<string>();
@@ -143,6 +147,11 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
         (await signal.addNumbersToGroup(group.id, numbersAdded, groupIDsByNumber))?.unregisteredNumbers ?? unregisteredNumbers;
     }
   }
+  else
+  {
+    console.log(`No numbers to add to group "${groupName}" (${group.id})`);
+  }
+
 
   return { numbersAdded, numbersRemoved, unregisteredNumbers };
 }

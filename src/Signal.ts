@@ -216,7 +216,7 @@ export default class SignalCli {
     return { unregisteredNumbers };
   }
 
-  public async removeNumbersFromGroup(groupId: string, removeMembers: string[], groupIDsByNumber: Map<string, string>) {
+  public async removeNumbersFromGroup(groupId: string, removeMembers: string[]) {
     TRACE && console.log("removeNumbersFromGroup()");
     if (removeMembers.length === 0) {
       console.warn(`No numbers to remove from group ${groupId}`);
