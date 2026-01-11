@@ -68,7 +68,12 @@ function userPhoneNumber(user: MyClubhouseUser) {
   return number ? normalizePhoneNumber(number) : null;
 }
 
-async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS, expectedNumbers: string[]) {
+function userPhoneNumberAndId(user: MyClubhouseUser) : [any, string] {
+  const number = user.MobileTelephone || user.HomeTelephone || user.BusinessTelephone;
+  return [number ? normalizePhoneNumber(number) : null, user.MembershipNumber];
+}
+
+async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS, expectedNumbers: string[], groupIDsByNumber: Map<string, string>) {
   TRACE && console.log("setupGroup()");
   console.log(`👯 "${groupName}" - ${expectedNumbers.length} member(s)`);
 
@@ -140,7 +145,7 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
 
     if (!DRY_RUN) {
       unregisteredNumbers =
-        (await signal.addNumbersToGroup(group.id, numbersAdded))?.unregisteredNumbers ?? unregisteredNumbers;
+        (await signal.addNumbersToGroup(group.id, numbersAdded, groupIDsByNumber))?.unregisteredNumbers ?? unregisteredNumbers;
     }
   }
 
@@ -205,15 +210,18 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
       // If the number was not on Signal for a previous group don't try to add it again
       .filter((number) => !numbersNotOnSignal.has(number));
 
-      // log user & number counts
-      TRACE && console.log(`${groupName}: ${groupUsers.length} users, ${groupNumbers.length} numbers`);
-      // list membership numbers for deugging
-      // for(const user of groupUsers)
-      // {
-      //   TRACE && console.log(`${user.MembershipNumber}`);
-      // }
+    // map of MembershipNumbers by phone nember for debug logging
+    let groupIDsByNumber =  new Map<string, string>();
+    for(const member of groupUsers)
+    {
+      let number = userPhoneNumber(member);
+      if(number != null && groupNumbers.includes(number))
+      {
+        groupIDsByNumber.set(number, member.MembershipNumber);
+      }
+    }
 
-    const { numbersRemoved, unregisteredNumbers } = await setupGroup(signal, groupName, groupNumbers);
+    const { numbersRemoved, unregisteredNumbers } = await setupGroup(signal, groupName, groupNumbers, groupIDsByNumber);
     numbersRemoved.forEach((number) => numbersRemovedFromGroups.add(number));
     unregisteredNumbers.forEach((number) => numbersNotOnSignal.add(number));
   }
