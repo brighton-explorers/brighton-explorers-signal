@@ -1,5 +1,5 @@
 import { ChildProcessWithoutNullStreams, execSync, spawn } from "child_process";
-import { DEBUG, TRACE } from "./env.js";
+import { DEBUG, TRACE, VERBOSE } from "./env.js";
 import { JSONRPCClient } from "json-rpc-2.0";
 import * as readline from "readline";
 import EventEmitter from "events";
@@ -185,25 +185,33 @@ export default class SignalCli {
 
     // Attempt to add members as a batch
     // This may fail if any of the numbers are not registered on Signal
-    try {
-      (await this.withTimeout(this.rpcClient.request("updateGroup", { groupId, members }))) as SignalGroup[];
-    } catch (error) {
-      console.warn(
-        "Failed to add members as a batch, trying one-by-one",
-        DEBUG ? error : (error as Error).message.replace(/\+[0-9]+/g, "[REDACTED]")
-      );
+    // try {
+    //   (await this.withTimeout(this.rpcClient.request("updateGroup", { groupId, members }))) as SignalGroup[];
+    // } catch (error) {
+      // console.warn(
+      //   "Failed to add members as a batch, trying one-by-one",
+      //   DEBUG ? error : (error as Error).message.replace(/\+[0-9]+/g, "[REDACTED]")
+      // );
+      let successes : string = "";
+      let fails : string = "";
+      let successCount = 0;
+      let failCount = 0;
       for (let i = 0; i < members.length; i++) {
         const memberNumber = members[i];
         try {
           await new Promise((resolve) => setTimeout(resolve, 250)); // Avoid rate limiting
           await this.withTimeout(this.rpcClient.request("updateGroup", { groupId, members: [memberNumber] }));
-          console.log(`Added member ${i + 1}/${members.length} [${groupIDsByNumber.get(memberNumber)}] to group ${groupId}`);
+          VERBOSE && console.log(`Added member ${i + 1}/${members.length} [${groupIDsByNumber.get(memberNumber)}] to group ${groupId}`);
+          successes+=`[${groupIDsByNumber.get(memberNumber)}] `;
+          successCount++;
         } catch (error) {
           const message = (error as Error).message;
-          console.warn(
+          VERBOSE && console.warn(
             `Failed to add member ${i + 1}/${members.length} [${groupIDsByNumber.get(memberNumber)}] to group ${groupId}`,
             DEBUG ? error : message.replace(/\+[0-9]+/g, "[REDACTED]")
           );
+          fails+=`[${groupIDsByNumber.get(memberNumber)}] `;
+          failCount++;
 
           if (message.includes("not registered")) {
             // This user is not Signal. Let's mark them as not registered so we don't try to add them again
@@ -211,7 +219,9 @@ export default class SignalCli {
           }
         }
       }
-    }
+      console.log(`Succeeded (${successCount}): ${successes}`);
+      console.log(`Failed (${failCount}): ${fails}`);
+    // }
 
     return { unregisteredNumbers };
   }

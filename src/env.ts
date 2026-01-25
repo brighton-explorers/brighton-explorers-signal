@@ -9,6 +9,11 @@ export const DEBUG = process.env.DEBUG === "true";
 export const TRACE = process.env.TRACE === "true";
 
 /**
+ * Enable verbose logs
+ */
+export const VERBOSE = process.env.VERBOSE === "true";
+
+/**
  * Don't actually make changes
  */
 export const DRY_RUN = process.env.DRY_RUN === "true";
