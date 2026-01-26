@@ -1,6 +1,6 @@
 import "log-timestamp";
 import { argv } from "process";
-import { DEBUG, DRY_RUN, TRACE } from "./env.js";
+import { DEBUG, DRY_RUN, TRACE, VERBOSE } from "./env.js";
 import { getActiveUsers, MyClubhouseActivity, MyClubhouseUser } from "./myclubhouse.js";
 import { normalizePhoneNumber } from "./phoneNumbers.js";
 import Signal, { getSignalNumber, SIGNAL_USER } from "./Signal.js";
@@ -86,7 +86,7 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
     existingGroup.permissionEditDetails !== "ONLY_ADMINS" ||
     existingGroup.groupInviteLink == null
   ) {
-    console.log(`Updating group permissions for "${groupName}" (${group.id})`);
+    VERBOSE && console.log(`Updating group permissions for "${groupName}" (${group.id})`);
     if (!DRY_RUN) {
       try{
         await signal.setGroupPermissions(group.id, {
@@ -123,8 +123,10 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
     (number): number is string => typeof number === "string" && !expectedNumbersSet.has(number)
   );
 
+  console.log(`Group "${groupName}": ${expectedNumbers.length} member(s). Adding ${numbersAdded.length}. Removing ${numbersRemoved.length}.`);
+
   if (numbersRemoved.length > 0) {
-    console.log(
+    VERBOSE && console.log(
       `Removing ${DEBUG ? numbersRemoved : numbersRemoved.length} numbers from group "${groupName}" (${group.id})`,
       DEBUG ? numbersRemoved : numbersRemoved.length
     );
@@ -132,13 +134,13 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
   }
   else
   {
-    console.log(`No numbers to remove from group "${groupName}" (${group.id})`);
+    VERBOSE && console.log(`No numbers to remove from group "${groupName}" (${group.id})`);
   }
 
   let unregisteredNumbers = new Set<string>();
 
   if (numbersAdded.length > 0) {
-    console.log(
+    VERBOSE && console.log(
       `Adding ${DEBUG ? numbersAdded : numbersAdded.length} new numbers to group "${groupName}" (${group.id})`
     );
 
@@ -149,7 +151,7 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
   }
   else
   {
-    console.log(`No numbers to add to group "${groupName}" (${group.id})`);
+    VERBOSE && console.log(`No numbers to add to group "${groupName}" (${group.id})`);
   }
 
 

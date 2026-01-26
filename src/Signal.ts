@@ -194,8 +194,10 @@ export default class SignalCli {
       // );
       let successes : string = "";
       let fails : string = "";
+      let timeouts : string ="";
       let successCount = 0;
       let failCount = 0;
+      let timeoutCount = 0;
       for (let i = 0; i < members.length; i++) {
         const memberNumber = members[i];
         try {
@@ -210,8 +212,18 @@ export default class SignalCli {
             `Failed to add member ${i + 1}/${members.length} [${groupIDsByNumber.get(memberNumber)}] to group ${groupId}`,
             DEBUG ? error : message.replace(/\+[0-9]+/g, "[REDACTED]")
           );
-          fails+=`[${groupIDsByNumber.get(memberNumber)}] `;
-          failCount++;
+
+          if(message.includes("Timeout")) {
+            timeouts+=`[${groupIDsByNumber.get(memberNumber)}] `;
+            timeoutCount++;
+          }
+          else {
+            fails+=`[${groupIDsByNumber.get(memberNumber)}] `;
+            failCount++;
+            console.warn(
+              `Failed to add member ${i + 1}/${members.length} [${groupIDsByNumber.get(memberNumber)}]`,
+              DEBUG ? error : message.replace(/\+[0-9]+/g, "[REDACTED]"));
+          }
 
           if (message.includes("not registered")) {
             // This user is not Signal. Let's mark them as not registered so we don't try to add them again
@@ -221,6 +233,7 @@ export default class SignalCli {
       }
       console.log(`Succeeded (${successCount}): ${successes}`);
       console.log(`Failed (${failCount}): ${fails}`);
+      console.log(`Timedout (${timeoutCount}): ${timeouts}`);
     // }
 
     return { unregisteredNumbers };
