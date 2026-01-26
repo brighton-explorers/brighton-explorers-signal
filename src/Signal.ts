@@ -232,8 +232,8 @@ export default class SignalCli {
         }
       }
       console.log(`Succeeded (${successCount}): ${successes}`);
-      console.log(`Failed (${failCount}): ${fails}`);
-      console.log(`Timedout (${timeoutCount}): ${timeouts}`);
+      console.log(`${failCount>0?"⚠️":""}Failed (${failCount}): ${fails}`);
+      console.log(`${timeoutCount>0?"⚠️":""}Timeouts (${timeoutCount}): ${timeouts}`);
     // }
 
     return { unregisteredNumbers };

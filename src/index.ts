@@ -70,7 +70,7 @@ function userPhoneNumber(user: MyClubhouseUser) {
 
 async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS, expectedNumbers: string[], groupIDsByNumber: Map<string, string>) {
   TRACE && console.log("setupGroup()");
-  console.log(`👯 "${groupName}" - ${expectedNumbers.length} member(s)`);
+  VERBOSE && console.log(`👯 "${groupName}" - ${expectedNumbers.length} member(s)`);
 
   const group = SIGNAL_GROUPS[groupName];
 
@@ -123,7 +123,7 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
     (number): number is string => typeof number === "string" && !expectedNumbersSet.has(number)
   );
 
-  console.log(`Group "${groupName}": ${expectedNumbers.length} member(s). Adding ${numbersAdded.length}. Removing ${numbersRemoved.length}.`);
+  console.log(`👯 "${groupName}": ${expectedNumbers.length} member(s). Adding ${numbersAdded.length}. Removing ${numbersRemoved.length}.`);
 
   if (numbersRemoved.length > 0) {
     VERBOSE && console.log(
