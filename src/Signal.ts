@@ -231,15 +231,15 @@ export default class SignalCli {
           }
         }
       }
-      console.log(`Succeeded (${successCount}): ${successes}`);
-      console.log(`${failCount>0?"⚠️":""}Failed (${failCount}): ${fails}`);
-      console.log(`${timeoutCount>0?"⚠️":""}Timeouts (${timeoutCount}): ${timeouts}`);
+      successCount>0 && console.log(`✅Succeeded (${successCount}): ${successes}`);
+      failCount>0 && console.log(`⚠️Failed (${failCount}): ${fails}`);
+      timeoutCount>0 && console.log(`⚠️Timeouts (${timeoutCount}): ${timeouts}`);
     // }
 
     return { unregisteredNumbers };
   }
 
-  public async removeNumbersFromGroup(groupId: string, removeMembers: string[]) {
+  public async removeNumbersFromGroup(groupId: string, removeMembers: string[], groupIDsByNumber: Map<string, string>) {
     TRACE && console.log("removeNumbersFromGroup()");
     if (removeMembers.length === 0) {
       console.warn(`No numbers to remove from group ${groupId}`);
@@ -255,6 +255,12 @@ export default class SignalCli {
         `Failed to remove ${removeMembers.length} members from group`,
         DEBUG ? error : (error as Error).message.replace(/\+[0-9]+/g, "[REDACTED]")
       );
+      let members : string = "";
+      for(const number of removeMembers)
+      {
+          members+=`[${groupIDsByNumber.get(number)}] `;
+      }
+      console.log(members);
     }
   }
 
