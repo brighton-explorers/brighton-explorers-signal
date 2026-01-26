@@ -231,9 +231,9 @@ export default class SignalCli {
           }
         }
       }
-      successCount>0 && console.log(`✅Succeeded (${successCount}): ${successes}`);
-      failCount>0 && console.log(`⚠️Failed (${failCount}): ${fails}`);
-      timeoutCount>0 && console.log(`⚠️Timeouts (${timeoutCount}): ${timeouts}`);
+      successCount>0 && console.log(`✅Adds Succeeded (${successCount}): ${successes}`);
+      failCount>0 && console.log(`⚠️Adds Failed (${failCount}): ${fails}`);
+      timeoutCount>0 && console.log(`⚠️Add Timeouts (${timeoutCount}): ${timeouts}`);
     // }
 
     return { unregisteredNumbers };
@@ -246,6 +246,14 @@ export default class SignalCli {
       return;
     }
 
+    // log member numbers
+    let members : string = "";
+    for(const number of removeMembers)
+    {
+        members+=`[${groupIDsByNumber.get(number)}] `;
+    }
+    console.log(`Removing (${removeMembers.length}): ${members}`);
+
     try {
       return (await this.withTimeout(
         this.rpcClient.request("updateGroup", { groupId, removeMembers })
@@ -255,12 +263,6 @@ export default class SignalCli {
         `Failed to remove ${removeMembers.length} members from group`,
         DEBUG ? error : (error as Error).message.replace(/\+[0-9]+/g, "[REDACTED]")
       );
-      let members : string = "";
-      for(const number of removeMembers)
-      {
-          members+=`[${groupIDsByNumber.get(number)}] `;
-      }
-      console.log(members);
     }
   }
 
