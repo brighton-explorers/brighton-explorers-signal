@@ -199,7 +199,7 @@ export default class SignalCli {
       let failCount = 0;
       let timeoutCount = 0;
       //for (let i = 0; i < members.length; i++) {
-      for (let i = 0; i < Math.min(members.length, MAXADDS); i++) {
+      for (let i = 0; i < Math.min(members.length, parseInt(MAXADDS)); i++) {
         const memberNumber = members[members.length-1-i]; // add in reverse order so new members go first
         try {
           await new Promise((resolve) => setTimeout(resolve, 250)); // Avoid rate limiting
