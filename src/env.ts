@@ -17,3 +17,5 @@ export const VERBOSE = process.env.VERBOSE === "true";
  * Don't actually make changes
  */
 export const DRY_RUN = process.env.DRY_RUN === "true";
+
+export const MAXADDS = process.env.MAXADDS
