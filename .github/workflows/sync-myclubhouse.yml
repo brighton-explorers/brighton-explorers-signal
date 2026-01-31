@@ -53,4 +53,5 @@ jobs:
           MYCLUBHOUSE_ACCESS_TOKEN: ${{ secrets.MYCLUBHOUSE_ACCESS_TOKEN }}
           TRACE: false
           VERBOSE: false
+          MAXADDS: 10
       - run: rm -rf .signal-cli-data/attachments

@@ -1,5 +1,5 @@
 import { ChildProcessWithoutNullStreams, execSync, spawn } from "child_process";
-import { DEBUG, TRACE, VERBOSE } from "./env.js";
+import { DEBUG, TRACE, VERBOSE, MAXADDS } from "./env.js";
 import { JSONRPCClient } from "json-rpc-2.0";
 import * as readline from "readline";
 import EventEmitter from "events";
@@ -198,8 +198,9 @@ export default class SignalCli {
       let successCount = 0;
       let failCount = 0;
       let timeoutCount = 0;
-      for (let i = 0; i < members.length; i++) {
-        const memberNumber = members[members.length-1-i];
+      //for (let i = 0; i < members.length; i++) {
+      for (let i = 0; i < Math.min(members.length, MAXADDS); i++) {
+        const memberNumber = members[members.length-1-i]; // add in reverse order so new members go first
         try {
           await new Promise((resolve) => setTimeout(resolve, 250)); // Avoid rate limiting
           await this.withTimeout(this.rpcClient.request("updateGroup", { groupId, members: [memberNumber] }));
