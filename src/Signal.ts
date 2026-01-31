@@ -199,7 +199,7 @@ export default class SignalCli {
       let failCount = 0;
       let timeoutCount = 0;
       for (let i = 0; i < members.length; i++) {
-        const memberNumber = members[i];
+        const memberNumber = members[members.length-1-i];
         try {
           await new Promise((resolve) => setTimeout(resolve, 250)); // Avoid rate limiting
           await this.withTimeout(this.rpcClient.request("updateGroup", { groupId, members: [memberNumber] }));
