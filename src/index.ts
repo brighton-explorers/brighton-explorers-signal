@@ -130,7 +130,7 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
       `Removing ${DEBUG ? numbersRemoved : numbersRemoved.length} numbers from group "${groupName}" (${group.id})`,
       DEBUG ? numbersRemoved : numbersRemoved.length
     );
-    !DRY_RUN && (await signal.removeNumbersFromGroup(group.id, numbersRemoved, groupIDsByNumber));
+    !DRY_RUN && (await signal.removeNumbersFromGroup(group.id, numbersRemoved));
   }
   else
   {

@@ -232,27 +232,19 @@ export default class SignalCli {
         }
       }
       successCount>0 && console.log(`✅Adds Succeeded (${successCount}): ${successes}`);
-      failCount>0 && console.log(`⚠️Adds Failed (${failCount}): ${fails}`);
-      timeoutCount>0 && console.log(`⚠️Add Timeouts (${timeoutCount}): ${timeouts}`);
+      failCount>0 && console.error(`❌Adds Failed (${failCount}): ${fails}`);
+      timeoutCount>0 && console.warn(`⚠️Add Timeouts (${timeoutCount}): ${timeouts}`);
     // }
 
     return { unregisteredNumbers };
   }
 
-  public async removeNumbersFromGroup(groupId: string, removeMembers: string[], groupIDsByNumber: Map<string, string>) {
+  public async removeNumbersFromGroup(groupId: string, removeMembers: string[]) {
     TRACE && console.log("removeNumbersFromGroup()");
     if (removeMembers.length === 0) {
       console.warn(`No numbers to remove from group ${groupId}`);
       return;
     }
-
-    // log member numbers
-    let members : string = "";
-    for(const number of removeMembers)
-    {
-        members+=`[${groupIDsByNumber.get(number)}] `;
-    }
-    console.log(`Removing (${removeMembers.length}): ${members}`);
 
     try {
       return (await this.withTimeout(
@@ -260,7 +252,7 @@ export default class SignalCli {
       )) as SignalGroup[];
     } catch (error) {
       console.warn(
-        `Failed to remove ${removeMembers.length} members from group`,
+        `❌Failed to remove ${removeMembers.length} members from group`,
         DEBUG ? error : (error as Error).message.replace(/\+[0-9]+/g, "[REDACTED]")
       );
     }
