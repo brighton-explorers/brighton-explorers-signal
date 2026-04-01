@@ -281,7 +281,7 @@ export default class SignalCli {
   private setupRpcClient(signalCliProcess: ChildProcessWithoutNullStreams) {
     TRACE && console.log("setupRpcClient()");
     const rpcClient = new JSONRPCClient(async (request) => {
-      DEBUG && console.log("signal-cli request", request);
+      (DEBUG || VERBOSE) && console.log("signal-cli request", request);
       signalCliProcess.stdin.write(JSON.stringify(request));
       signalCliProcess.stdin.write("\n");
     });
@@ -289,7 +289,7 @@ export default class SignalCli {
     const lineReader = readline.createInterface({ input: this.process.stdout });
     lineReader.on("line", (responseStr) => {
       const response = JSON.parse(responseStr);
-      DEBUG && console.log("signal-cli response", response);
+      (DEBUG || VERBOSE) && console.log("signal-cli response", response);
       this.rpcClient.receive(response);
       if (response.method === "receive") {
         this.eventEmitter.emit("receive", response.params);
