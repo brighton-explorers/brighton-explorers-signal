@@ -266,7 +266,7 @@ export default class SignalCli {
 
     signalCliProcess.addListener("exit", (code) => {
       if (code && code !== SIGTERM) {
-        console.error(`signal-cli exited with code ${code}`);
+        console.error(`spawnSignalCli: signal-cli exited with code ${code}`);
         process.exit(code);
       }
     });
