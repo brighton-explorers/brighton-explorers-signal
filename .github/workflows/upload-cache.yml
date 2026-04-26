@@ -2,7 +2,7 @@ name: Upload signal-cli data cache
 
 on:
   push:
-    branches: [upload-cache]
+    branches: [main]
 
 jobs:
   upload-cache:
