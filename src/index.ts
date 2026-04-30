@@ -197,7 +197,8 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
   });
 
   const activeUsers = await getActiveUsers();
-
+  TRACE && console.log(`${activeUsers.length} activeUsers`);
+    
   // Allow some time for any group updates to come in
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
@@ -207,7 +208,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
   const numbersNotOnSignal = new Set<string>();
 
   for (const groupName of groupNames) {
-    TRACE && console.log(`Getting groupUsers for $(groupName)`);
+    TRACE && console.log(`Getting groupUsers for "${groupName}"`);
     const groupUsers = activeUsers.filter((user) => SIGNAL_GROUPS[groupName].allowUser(user, groupName));
 
     // Find the Signal number for all matching users
