@@ -51,7 +51,7 @@ const SIGNAL_GROUPS: Readonly<
   Windsurfing: { id: "szh6ZQ5FDPeshx6gjyn980sJeAk/oswNlaOrSPT9zgg=", allowUser: userHasActivitySelected },
   Running: { id: "cLYnB3coyuWm6RGawhBT1vjQGu1iZTvjXIM8v8jbIjA=", allowUser: userHasActivitySelected },
   Social: { id: "2CHfRlRQFWrLlFapAsoGW30C+eEKt0+6kSFJYHVu1BM=", allowUser: userHasActivitySelected },
-  "Young Members": { id: "WfJ0FbSzOx0wXj//Qc8/jj0bQXsDynIyExZfQIKcDrM=", allowUser: (user) => user.Age < 30 },
+//  "Young Members": { id: "WfJ0FbSzOx0wXj//Qc8/jj0bQXsDynIyExZfQIKcDrM=", allowUser: (user) => user.Age < 30 },
 };
 
 const GROUP_REMOVAL_DIRECT_MESSAGE = `Hi! 👋
