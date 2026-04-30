@@ -22,7 +22,6 @@ jobs:
       - run: yarn
       - run: yarn test
       - run: yarn build
-      - run: ls -l
       # From here we only run if on main branch
       - if: github.ref == 'refs/heads/main'
         uses: ./.github/actions/setup-signal-cli
@@ -55,4 +54,5 @@ jobs:
           TRACE: true
           VERBOSE: true
           MAXADDS: "100"
+      - run: ls -l
       - run: rm -rf .signal-cli-data/attachments
