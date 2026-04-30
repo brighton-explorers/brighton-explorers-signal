@@ -5,7 +5,8 @@ import { getActiveUsers, MyClubhouseActivity, MyClubhouseUser } from "./myclubho
 import { normalizePhoneNumber } from "./phoneNumbers.js";
 import Signal, { getSignalNumber, SIGNAL_USER } from "./Signal.js";
 
-type SignalGroupName = "Announcements" | "Committee" | "Bar Volunteers" | "Young Members" | MyClubhouseActivity;
+//type SignalGroupName = "Announcements" | "Committee" | "Bar Volunteers" | "Young Members" | MyClubhouseActivity;
+type SignalGroupName = "Announcements" | "Committee" | "Bar Volunteers" | MyClubhouseActivity;
 
 function userHasActivitySelected(user: MyClubhouseUser, activityName: SignalGroupName): boolean {
   return (user.Attributes.Activities ?? [])?.some((activityPreference) => activityPreference === activityName);
