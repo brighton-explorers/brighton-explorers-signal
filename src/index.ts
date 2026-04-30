@@ -5,8 +5,7 @@ import { getActiveUsers, MyClubhouseActivity, MyClubhouseUser } from "./myclubho
 import { normalizePhoneNumber } from "./phoneNumbers.js";
 import Signal, { getSignalNumber, SIGNAL_USER } from "./Signal.js";
 
-//type SignalGroupName = "Announcements" | "Committee" | "Bar Volunteers" | "Young Members" | MyClubhouseActivity;
-type SignalGroupName = "Announcements" | "Committee" | "Bar Volunteers" | MyClubhouseActivity;
+type SignalGroupName = "Announcements" | "Committee" | "Bar Volunteers" | "Young Members" | MyClubhouseActivity;
 
 function userHasActivitySelected(user: MyClubhouseUser, activityName: SignalGroupName): boolean {
   return (user.Attributes.Activities ?? [])?.some((activityPreference) => activityPreference === activityName);
@@ -51,7 +50,7 @@ const SIGNAL_GROUPS: Readonly<
   Windsurfing: { id: "szh6ZQ5FDPeshx6gjyn980sJeAk/oswNlaOrSPT9zgg=", allowUser: userHasActivitySelected },
   Running: { id: "cLYnB3coyuWm6RGawhBT1vjQGu1iZTvjXIM8v8jbIjA=", allowUser: userHasActivitySelected },
   Social: { id: "2CHfRlRQFWrLlFapAsoGW30C+eEKt0+6kSFJYHVu1BM=", allowUser: userHasActivitySelected },
-//  "Young Members": { id: "WfJ0FbSzOx0wXj//Qc8/jj0bQXsDynIyExZfQIKcDrM=", allowUser: (user) => user.Age < 30 },
+  "Young Members": { id: "WfJ0FbSzOx0wXj//Qc8/jj0bQXsDynIyExZfQIKcDrM=", allowUser: (user) => user.Age < 30 },
 };
 
 const GROUP_REMOVAL_DIRECT_MESSAGE = `Hi! 👋
@@ -208,6 +207,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
   const numbersNotOnSignal = new Set<string>();
 
   for (const groupName of groupNames) {
+    TRACE && console.log(`Getting groupUsers for $(groupName)`);
     const groupUsers = activeUsers.filter((user) => SIGNAL_GROUPS[groupName].allowUser(user, groupName));
 
     // Find the Signal number for all matching users
