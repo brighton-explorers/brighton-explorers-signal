@@ -35,6 +35,7 @@ jobs:
             "Badminton" \
             "Caving" \
             "Climbing" \
+            "Cycling (Road)" \
             "Kayaking" \
             "Mountain Biking" \
             "Mountain Sports" \
@@ -44,7 +45,8 @@ jobs:
             "Walking" \
             "Windsurfing" \
             "Running" \
-            "Social"
+            "Social" \
+            "Young Members"
         env:
           DRY_RUN: ${{ github.ref == 'refs/heads/main' && 'false' || 'true' }}
           SIGNAL_USER: ${{ secrets.SIGNAL_USER }}
