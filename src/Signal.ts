@@ -195,9 +195,11 @@ export default class SignalCli {
       let successes : string = "";
       let fails : string = "";
       let timeouts : string ="";
+      let notRegistered : string ="";
       let successCount = 0;
       let failCount = 0;
       let timeoutCount = 0;
+      let notRegisteredCount = 0;
       //for (let i = 0; i < members.length; i++) {
       //console.log(`MAXADDS=${MAXADDS}`) // hack MAXADDS
       for (let i = 0; i < Math.min(members.length, +MAXADDS!); i++) {
@@ -219,6 +221,10 @@ export default class SignalCli {
             timeouts+=`[${groupIDsByNumber.get(memberNumber)}] `;
             timeoutCount++;
           }
+          else if(message.includes("not registered")) {
+            notRegistered+=`[${groupIDsByNumber.get(memberNumber)}] `;
+            notRegisteredCount++;
+          }
           else {
             fails+=`[${groupIDsByNumber.get(memberNumber)}] `;
             failCount++;
@@ -235,6 +241,7 @@ export default class SignalCli {
       }
       successCount>0 && console.log(`✅Adds Succeeded (${successCount}): ${successes}`);
       failCount>0 && console.error(`❌Adds Failed (${failCount}): ${fails}`);
+      notRegisteredCount>0 && console.warn(`⚠️Not Registered (${notRegisteredCount}): ${notRegistered}`);
       timeoutCount>0 && console.warn(`⚠️Add Timeouts (${timeoutCount}): ${timeouts}`);
     // }
 
