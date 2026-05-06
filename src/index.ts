@@ -5,7 +5,7 @@ import { getActiveUsers, MyClubhouseActivity, MyClubhouseUser } from "./myclubho
 import { normalizePhoneNumber } from "./phoneNumbers.js";
 import Signal, { getSignalNumber, SIGNAL_USER } from "./Signal.js";
 
-type SignalGroupName = "Announcements" | "Committee" | "Bar Volunteers" | "Young Members" | MyClubhouseActivity;
+type SignalGroupName = "Debug" | "Announcements" | "Committee" | "Bar Volunteers" | "Young Members" | MyClubhouseActivity;
 
 function userHasActivitySelected(user: MyClubhouseUser, activityName: SignalGroupName): boolean {
   return (user.Attributes.Activities ?? [])?.some((activityPreference) => activityPreference === activityName);
@@ -14,6 +14,10 @@ function userHasActivitySelected(user: MyClubhouseUser, activityName: SignalGrou
 const SIGNAL_GROUPS: Readonly<
   Record<SignalGroupName, { id: string; allowUser: (user: MyClubhouseUser, groupName: SignalGroupName) => boolean }>
 > = {
+  Debug: {
+    id: "OStg3hugH5JZ3qh4CMno3REzVnZaLw3F1uF939HlE3I=",
+    allowUser: () => false, // no members
+  },  
   Committee: {
     id: "jkhJAZMMjA8eHDyrCDOC3d8D+L1DKhacSa0GF+UDyFM=",
     allowUser: (user) =>
@@ -165,6 +169,8 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
   TRACE && console.log("syncGroups()");
 
   const signal = new Signal();
+
+  signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, "SyncGroups started " + new Date().toLocaleString())
 
   // Send read receipts for any messages received
 

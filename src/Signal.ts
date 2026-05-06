@@ -122,6 +122,11 @@ export default class SignalCli {
     return await this.withTimeout(this.rpcClient.request("send", { recipient, message }));
   }
 
+  public async sendMessageToGroup(groupId: string, message: string) {
+    TRACE && console.log("sendMessage()");
+    return await this.withTimeout(this.rpcClient.request("send", { groupId, message }));
+  }
+
   public async listGroups() {
     TRACE && console.log("listGroups()");
     return (await this.rpcClient.request("listGroups", {})) as SignalGroup[];
