@@ -170,8 +170,6 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
 
   const signal = new Signal();
 
-  signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, "SyncGroups started " + new Date().toLocaleString())
-
   // Send read receipts for any messages received
 
   signal.addListener("receive", async (message) => {
@@ -212,6 +210,8 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
 
   const numbersRemovedFromGroups = new Set<string>();
   const numbersNotOnSignal = new Set<string>();
+
+  signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, "SyncGroups started " + new Date().toLocaleString())
 
   for (const groupName of groupNames) {
     TRACE && console.log(`Getting groupUsers for "${groupName}"`);
