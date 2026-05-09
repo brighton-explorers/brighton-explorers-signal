@@ -244,7 +244,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
     numbersRemoved.forEach((number) => numbersRemovedFromGroups.add(number));
     unregisteredNumbers.forEach((number) => numbersNotOnSignal.add(number));
 
-    debugMessage+= `${groupName}: ${numbersAddedToGroups.size} added ${numbersRemovedFromGroups.size} removed ${numbersNotOnSignal.size} not on Signal\n`;
+    debugMessage+= `${groupName}: ${numbersAddedToGroups.size} add ${numbersRemovedFromGroups.size} rem ${numbersNotOnSignal.size} nos\n`;
   }
 
   // Send a message to inactive numbers to tell them why they have been removed from groups
