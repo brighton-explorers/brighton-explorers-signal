@@ -215,6 +215,8 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
   const startDate = new Date();
   //signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, `SyncGroups started ${startDate.toLocaleString()});
 
+  let debugMessage = "";
+
   for (const groupName of groupNames) {
     TRACE && console.log(`Getting groupUsers for "${groupName}"`);
     const groupUsers = activeUsers.filter((user) => SIGNAL_GROUPS[groupName].allowUser(user, groupName));
@@ -241,6 +243,8 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
     numbersAdded.forEach((number) => numbersAddedToGroups.add(number));
     numbersRemoved.forEach((number) => numbersRemovedFromGroups.add(number));
     unregisteredNumbers.forEach((number) => numbersNotOnSignal.add(number));
+
+    debugMessage+= `${groupName}: ${numbersAddedToGroups.size} added ${numbersRemovedFromGroups.size} removed ${numbersNotOnSignal.size} not on Signal\n`;
   }
 
   // Send a message to inactive numbers to tell them why they have been removed from groups
@@ -265,6 +269,8 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
           ?.members.map((member) => member.number)
           .filter((number): number is string => Boolean(number)) ?? []
     )
+
+    
   );
   console.log(
     `${knownSignalNumbers.size} Signal users out of ${activeUsers.length} total active members (${Math.round(
@@ -273,10 +279,9 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
   );
 
   const endDate = new Date();
-  const elapsedSeconds = (endDate.getTime()-startDate.getTime())/1000;
+  const elapsedSeconds = Math.floor((endDate.getTime()-startDate.getTime())/1000);
   signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, 
-    `SyncGroups started ${startDate.toLocaleString()}. Completed in ${Math.floor(elapsedSeconds/60)}:${elapsedSeconds%60}\n`+
-    `${numbersAddedToGroups.size} Numbers added\n${numbersRemovedFromGroups.size} Numbers removed\n{numbersNotOnSignal.size} Numbers not on Signal`)
+    `SyncGroups started ${startDate.toLocaleString()}. Completed in ${Math.floor(elapsedSeconds/60)}:${elapsedSeconds%60}\n${debugMessage}`);
 
   signal.close();
 }
