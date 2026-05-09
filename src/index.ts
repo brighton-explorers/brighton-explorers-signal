@@ -208,10 +208,12 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
 
   const signalGroups = await signal.listGroups();
 
+  const numbersAddedToGroups = new Set<string>();
   const numbersRemovedFromGroups = new Set<string>();
   const numbersNotOnSignal = new Set<string>();
 
-  signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, "SyncGroups started " + new Date().toLocaleString())
+  const startDate = new Date();
+  //signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, `SyncGroups started ${startDate.toLocaleString()});
 
   for (const groupName of groupNames) {
     TRACE && console.log(`Getting groupUsers for "${groupName}"`);
@@ -235,7 +237,8 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
       }
     }
 
-    const { numbersRemoved, unregisteredNumbers } = await setupGroup(signal, groupName, groupNumbers, groupIDsByNumber);
+    const { numbersAdded, numbersRemoved, unregisteredNumbers } = await setupGroup(signal, groupName, groupNumbers, groupIDsByNumber);
+    numbersAdded.forEach((number) => numbersAddedToGroups.add(number));
     numbersRemoved.forEach((number) => numbersRemovedFromGroups.add(number));
     unregisteredNumbers.forEach((number) => numbersNotOnSignal.add(number));
   }
@@ -268,6 +271,12 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
       (knownSignalNumbers.size / activeUsers.length) * 100
     )}%) `
   );
+
+  const endDate = new Date();
+  const elapsedSeconds = (endDate.getTime()-startDate.getTime())/1000;
+  signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, 
+    `SyncGroups started ${startDate.toLocaleString()}. Completed in ${Math.floor(elapsedSeconds/60)}:${elapsedSeconds%60}\n`+
+    `${numbersAddedToGroups.size} Numbers added\n${numbersRemovedFromGroups.size} Numbers removed\n{numbersNotOnSignal.size} Numbers not on Signal`)
 
   signal.close();
 }
