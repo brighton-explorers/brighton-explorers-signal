@@ -182,6 +182,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
             .map(({ number }) => number)
             .filter((number): number is string => Boolean(number));
           for (const number of numbers) {
+            await new Promise((resolve) => setTimeout(resolve, 250)); // Avoid rate limiting
             try {
               await signal.sendReceipt(number, timestamp);
             } catch (error) {
