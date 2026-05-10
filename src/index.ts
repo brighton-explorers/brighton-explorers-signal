@@ -245,7 +245,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
     numbersRemoved.forEach((number) => numbersRemovedFromGroups.add(number));
     unregisteredNumbers.forEach((number) => numbersNotOnSignal.add(number));
 
-    debugMessage+= `${groupName}: ${numbersAddedToGroups.size} add ${numbersRemovedFromGroups.size} rem ${numbersNotOnSignal.size} nos\n`;
+    debugMessage+= `${groupName}: ${numbersAddedToGroups.size}a, ${numbersRemovedFromGroups.size}r, ${numbersNotOnSignal.size}n\n`;
   }
 
   // Send a message to inactive numbers to tell them why they have been removed from groups
@@ -281,8 +281,9 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
 
   const endDate = new Date();
   const elapsedSeconds = Math.floor((endDate.getTime()-startDate.getTime())/1000);
-  signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, 
-    `SyncGroups started ${startDate.toLocaleString()}. Completed in ${Math.floor(elapsedSeconds/60)}:${elapsedSeconds%60}\n${debugMessage}`);
+  const signalDebugMessage = `SyncGroups started ${startDate.toLocaleString()}. Completed in ${Math.floor(elapsedSeconds/60)}:${elapsedSeconds%60}\n${debugMessage}`'
+  signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, signalDebugMessage);    
+  console.log(signalDebugMessage);
 
   signal.close();
 }
