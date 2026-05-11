@@ -181,12 +181,15 @@ export default class SignalCli {
    */
   public async addNumbersToGroup(groupId: string, members: string[], groupIDsByNumber: Map<string, string>) {
     TRACE && console.log("addNumbersToGroup()");
+    const numbersAdded = new Set<string>();
+    const numbersFailed = new Set<string>();
+    const numbersTimedOut = new Set<string>();
+    const numbersNotOnSignal = new Set<string>();
+    
     if (members.length === 0) {
       console.warn(`No numbers to add to group ${groupId}`);
-      return;
+      return { numbersAdded, numbersTimedOut, numbersFailed, numbersNotOnSignal };
     }
-
-    const unregisteredNumbers = new Set<string>();
 
     // Attempt to add members as a batch
     // This may fail if any of the numbers are not registered on Signal
@@ -215,6 +218,7 @@ export default class SignalCli {
           VERBOSE && console.log(`Added member ${i + 1}/${members.length} [${groupIDsByNumber.get(memberNumber)}] to group ${groupId}`);
           successes+=`[${groupIDsByNumber.get(memberNumber)}] `;
           successCount++;
+          numbersAdded.add(memberNumber);
         } catch (error) {
           const message = (error as Error).message;
           VERBOSE && console.warn(
@@ -225,10 +229,12 @@ export default class SignalCli {
           if(message.includes("Timeout")) {
             timeouts+=`[${groupIDsByNumber.get(memberNumber)}] `;
             timeoutCount++;
+            numbersTimedOut.add(memberNumber);
           }
           else if(message.includes("not registered")) {
             notRegistered+=`[${groupIDsByNumber.get(memberNumber)}] `;
             notRegisteredCount++;
+            numbersNotOnSignal.add(memberNumber);
           }
           else {
             fails+=`[${groupIDsByNumber.get(memberNumber)}] `;
@@ -236,12 +242,13 @@ export default class SignalCli {
             console.warn(
               `Failed to add member ${i + 1}/${members.length} [${groupIDsByNumber.get(memberNumber)}]`,
               DEBUG ? error : message.replace(/\+[0-9]+/g, "[REDACTED]"));
+              numbersFailed.add(memberNumber);
           }
 
-          if (message.includes("not registered")) {
-            // This user is not Signal. Let's mark them as not registered so we don't try to add them again
-            unregisteredNumbers.add(memberNumber);
-          }
+          // if (message.includes("not registered")) {
+          //   // This user is not Signal. Let's mark them as not registered so we don't try to add them again
+          //   numbersNotOnSignal.add(memberNumber);
+          // }
         }
       }
       successCount>0 && console.log(`✅Adds Succeeded (${successCount}): ${successes}`);
@@ -250,7 +257,7 @@ export default class SignalCli {
       timeoutCount>0 && console.warn(`⚠️Add Timeouts (${timeoutCount}): ${timeouts}`);
     // }
 
-    return { unregisteredNumbers };
+    return { numbersAdded, numbersTimedOut, numbersFailed, numbersNotOnSignal };
   }
 
   public async removeNumbersFromGroup(groupId: string, removeMembers: string[]) {

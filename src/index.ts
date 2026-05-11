@@ -109,6 +109,12 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
     }
   }
 
+  let numbersAdded = new Set<string>();
+  let numbersRemoved = new Set<string>();
+  let numbersTimedOut = new Set<string>();
+  let numbersFailed = new Set<string>();
+  let numbersNotOnSignal = new Set<string>();
+
   // Set group members
   const adminNumbers = existingGroup.admins
     .map(({ number }) => number)
@@ -122,19 +128,20 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
       ...existingGroup.requestingMembers,
     ].map((member) => member.number)
   );
-  const numbersAdded = expectedNumbers.filter((number) => !existingNumbers.has(number));
-  const numbersRemoved = [...existingNumbers].filter(
+  const numbersToAdd = expectedNumbers.filter((number) => !existingNumbers.has(number));
+  const numbersToRemove = [...existingNumbers].filter(
     (number): number is string => typeof number === "string" && !expectedNumbersSet.has(number)
   );
 
-  console.log(`👯 "${groupName}": ${expectedNumbers.length} member(s). Adding ${numbersAdded.length}. Removing ${numbersRemoved.length}.`);
+  console.log(`👯 "${groupName}": ${expectedNumbers.length} member(s). Adding ${numbersToAdd.length}. Removing ${numbersToRemove.length}.`);
 
-  if (numbersRemoved.length > 0) {
+  if (numbersToRemove.length > 0) {
     VERBOSE && console.log(
-      `Removing ${DEBUG ? numbersRemoved : numbersRemoved.length} numbers from group "${groupName}" (${group.id})`,
-      DEBUG ? numbersRemoved : numbersRemoved.length
+      `Removing ${DEBUG ? numbersToRemove : numbersToRemove.length} numbers from group "${groupName}" (${group.id})`,
+      DEBUG ? numbersToRemove : numbersToRemove.length
     );
-    !DRY_RUN && (await signal.removeNumbersFromGroup(group.id, numbersRemoved));
+    !DRY_RUN && (await signal.removeNumbersFromGroup(group.id, numbersToRemove));
+    numbersToRemove.forEach((number) => numbersRemoved.add(number));
   }
   else
   {
@@ -143,14 +150,20 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
 
   let unregisteredNumbers = new Set<string>();
 
-  if (numbersAdded.length > 0) {
+  if (numbersToAdd.length > 0) {
     VERBOSE && console.log(
-      `Adding ${DEBUG ? numbersAdded : numbersAdded.length} new numbers to group "${groupName}" (${group.id})`
+      `Adding ${DEBUG ? numbersToAdd : numbersToAdd.length} new numbers to group "${groupName}" (${group.id})`
     );
 
     if (!DRY_RUN) {
-      unregisteredNumbers =
-        (await signal.addNumbersToGroup(group.id, numbersAdded, groupIDsByNumber))?.unregisteredNumbers ?? unregisteredNumbers;
+      const { numbersAdded: _numbersAdded, numbersTimedOut: _numbersTimedOut, numbersFailed: _numbersFailed, numbersNotOnSignal: _numbersNotOnSignal } = 
+      await signal.addNumbersToGroup(group.id, numbersToAdd, groupIDsByNumber);
+      numbersAdded = _numbersAdded;
+      numbersTimedOut = _numbersTimedOut;
+      numbersFailed = _numbersFailed;
+      numbersNotOnSignal = _numbersNotOnSignal;
+      //unregisteredNumbers =
+        //(await signal.addNumbersToGroup(group.id, numbersToAdd, groupIDsByNumber))?.unregisteredNumbers ?? unregisteredNumbers;
     }
   }
   else
@@ -158,8 +171,7 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
     VERBOSE && console.log(`No numbers to add to group "${groupName}" (${group.id})`);
   }
 
-
-  return { numbersAdded, numbersRemoved, unregisteredNumbers };
+  return { numbersAdded, numbersRemoved, numbersTimedOut, numbersFailed, numbersNotOnSignal };
 }
 
 async function syncGroups(...groupNames: SignalGroupName[]) {
@@ -211,7 +223,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
 
   const numbersAddedToGroups = new Set<string>();
   const numbersRemovedFromGroups = new Set<string>();
-  const numbersNotOnSignal = new Set<string>();
+  const allNumbersNotOnSignal = new Set<string>();
 
   const startDate = new Date();
   //signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, `SyncGroups started ${startDate.toLocaleString()});
@@ -227,7 +239,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
       .map(userPhoneNumber)
       .filter((number): number is string => Boolean(number))
       // If the number was not on Signal for a previous group don't try to add it again
-      .filter((number) => !numbersNotOnSignal.has(number));
+      .filter((number) => !allNumbersNotOnSignal.has(number));
 
     // map of MembershipNumbers by phone nember for debug logging
     let groupIDsByNumber =  new Map<string, string>();
@@ -240,12 +252,12 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
       }
     }
 
-    const { numbersAdded, numbersRemoved, unregisteredNumbers } = await setupGroup(signal, groupName, groupNumbers, groupIDsByNumber);
+    const { numbersAdded, numbersRemoved, numbersTimedOut, numbersFailed, numbersNotOnSignal } = await setupGroup(signal, groupName, groupNumbers, groupIDsByNumber);
     numbersAdded.forEach((number) => numbersAddedToGroups.add(number));
     numbersRemoved.forEach((number) => numbersRemovedFromGroups.add(number));
-    unregisteredNumbers.forEach((number) => numbersNotOnSignal.add(number));
+    numbersNotOnSignal.forEach((number) => allNumbersNotOnSignal.add(number));
 
-    debugMessage+= `${groupName}: ${numbersAdded.length}a, ${numbersRemoved.length}r, ${unregisteredNumbers.size}n\n`;
+    debugMessage+= `${groupName}: ${numbersAdded.size}a, ${numbersRemoved.size}r, ${numbersTimedOut.size}t, ${numbersFailed.size}f, ${numbersNotOnSignal.size}n, \n`;
   }
 
   // Send a message to inactive numbers to tell them why they have been removed from groups
