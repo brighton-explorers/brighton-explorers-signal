@@ -130,6 +130,11 @@ export default class SignalCli {
   public async listGroups() {
     TRACE && console.log("listGroups()");
     return (await this.rpcClient.request("listGroups", {})) as SignalGroup[];
+  }  
+  
+  public async receive() {
+    TRACE && console.log("receive()");
+    await this.rpcClient.request("receive", {});
   }
 
   public async setGroupPermissions(

@@ -213,6 +213,8 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
     }
   });
 
+  signal.receive();
+
   const activeUsers = await getActiveUsers();
   TRACE && console.log(`${activeUsers.length} activeUsers`);
     
