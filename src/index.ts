@@ -303,7 +303,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
   const elapsedSeconds = Math.floor((endDate.getTime()-startDate.getTime())/1000);
   const signalDebugMessage = `SyncGroups started ${startDate.toLocaleString()}. Completed in ${Math.floor(elapsedSeconds/60)}:${elapsedSeconds%60}\n${debugMessage}`;
   signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, signalDebugMessage);    
-  console.log(signalDebugMessage);
+  //console.log(signalDebugMessage);
 
   signal.close();
 }
