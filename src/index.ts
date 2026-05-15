@@ -1,6 +1,6 @@
 import "log-timestamp";
 import { argv } from "process";
-import { DEBUG, DRY_RUN, TRACE, VERBOSE } from "./env.js";
+import { DEBUG, DRY_RUN, TRACE, VERBOSE, SHOW_REMOVES } from "./env.js";
 import { getActiveUsers, MyClubhouseActivity, MyClubhouseUser } from "./myclubhouse.js";
 import { normalizePhoneNumber } from "./phoneNumbers.js";
 import Signal, { getSignalNumber, SIGNAL_USER } from "./Signal.js";
@@ -258,6 +258,14 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
     numbersNotOnSignal.forEach((number) => allNumbersNotOnSignal.add(number));
 
     debugMessage+= `${groupName}: ${numbersAdded.size}a, ${numbersRemoved.size}r, ${numbersTimedOut.size}t, ${numbersFailed.size}f, ${numbersNotOnSignal.size}n, \n`;
+    if(SHOW_REMOVES && numbersRemoved.size>0)
+    {
+       "Removed: " 
+       for (const number in numbersRemoved) {
+          debugMessage+=number+", "
+       }
+      debugMessage+= "\n";
+    }
   }
 
   // Send a message to inactive numbers to tell them why they have been removed from groups

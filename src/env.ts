@@ -19,3 +19,6 @@ export const VERBOSE = process.env.VERBOSE === "true";
 export const DRY_RUN = process.env.DRY_RUN === "true";
 
 export const MAXADDS = process.env.MAXADDS;
+
+export const SHOW_REMOVES = process.env.SHOW_REMOVES;
+
