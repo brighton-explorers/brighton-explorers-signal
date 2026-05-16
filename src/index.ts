@@ -260,10 +260,8 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
     debugMessage+= `${groupName}: ${numbersAdded.size}a, ${numbersRemoved.size}r, ${numbersTimedOut.size}t, ${numbersFailed.size}f, ${numbersNotOnSignal.size}n, \n`;
     if(SHOW_REMOVES && numbersRemoved.size>0)
     {
-       "Removed: " 
-       for (const number in numbersRemoved) {
-          debugMessage+=number+", "
-       }
+      debugMessage+="Removed: " ;
+      numbersRemoved.forEach(number => debugMessage+=(number+", "));
       debugMessage+= "\n";
     }
   }
