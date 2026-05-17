@@ -54,6 +54,6 @@ jobs:
           TRACE: false
           VERBOSE: false
           MAXADDS: "100"
-          SHOW_REMOVES: true
+          SHOW_REMOVES: false
       - run: ls -l
       - run: rm -rf .signal-cli-data/attachments
