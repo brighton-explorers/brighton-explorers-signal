@@ -297,6 +297,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
     )}%) `
   );
 
+  await new Promise((resolve) => setTimeout(resolve, 250)); // Avoid rate limiting
   const endDate = new Date();
   const elapsedSeconds = Math.floor((endDate.getTime()-startDate.getTime())/1000);
   const signalDebugMessage = `SyncGroups started ${startDate.toLocaleString()}. Completed in ${Math.floor(elapsedSeconds/60)}:${elapsedSeconds%60}\n${debugMessage}`;
