@@ -259,17 +259,23 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
       }
     }
 
-    const { numbersAdded, numbersRemoved, numbersTimedOut, numbersFailed, numbersNotOnSignal } = await setupGroup(signal, groupName, groupNumbers, groupIDsByNumber);
-    numbersAdded.forEach((number) => numbersAddedToGroups.add(number));
-    numbersRemoved.forEach((number) => numbersRemovedFromGroups.add(number));
-    numbersNotOnSignal.forEach((number) => allNumbersNotOnSignal.add(number));
-
-    debugMessage+= `${groupName}: ${numbersAdded.size}a, ${numbersRemoved.size}r, ${numbersTimedOut.size}t, ${numbersFailed.size}f, ${numbersNotOnSignal.size}n, \n`;
-    if(SHOW_REMOVES && numbersRemoved.size>0)
+    try
     {
-      debugMessage+="Removed: " ;
-      numbersRemoved.forEach(number => debugMessage+=(number+", "));
-      debugMessage+= "\n";
+      const { numbersAdded, numbersRemoved, numbersTimedOut, numbersFailed, numbersNotOnSignal } = await setupGroup(signal, groupName, groupNumbers, groupIDsByNumber);
+      numbersAdded.forEach((number) => numbersAddedToGroups.add(number));
+      numbersRemoved.forEach((number) => numbersRemovedFromGroups.add(number));
+      numbersNotOnSignal.forEach((number) => allNumbersNotOnSignal.add(number));
+      debugMessage+= `${groupName}: ${numbersAdded.size}a, ${numbersRemoved.size}r, ${numbersTimedOut.size}t, ${numbersFailed.size}f, ${numbersNotOnSignal.size}n, \n`;
+      if(SHOW_REMOVES && numbersRemoved.size>0)
+      {
+        debugMessage+="Removed: " ;
+        numbersRemoved.forEach(number => debugMessage+=(number+", "));
+        debugMessage+= "\n";
+      }
+    }
+    catch(error)
+    {
+        console.warn(`setupGroup(${groupName} failed): ${error}`);
     }
   }
 
