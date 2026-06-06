@@ -5,10 +5,16 @@ import { getActiveUsers, MyClubhouseActivity, MyClubhouseUser } from "./myclubho
 import { normalizePhoneNumber } from "./phoneNumbers.js";
 import Signal, { getSignalNumber, SIGNAL_USER } from "./Signal.js";
 
-type SignalGroupName = "Debug" | "Announcements" | "Committee" | "Bar Volunteers" | "Young Members" | MyClubhouseActivity;
+type SignalGroupName = "Debug" | "Announcements" | "Committee" | "Bar Volunteers" | "Young Members" | "Paddlesports" | MyClubhouseActivity;
 
 function userHasActivitySelected(user: MyClubhouseUser, activityName: SignalGroupName): boolean {
   return (user.Attributes.Activities ?? [])?.some((activityPreference) => activityPreference === activityName);
+}
+
+function isPaddlesportUser(user: MyClubhouseUser, activityName: SignalGroupName): boolean {
+  return (user.Attributes.Activities ?? [])?.some((activityPreference) => 
+    activityPreference === "Kayaking" || 
+    activityPreference === "Stand Up Paddleboarding (SUP)" );
 }
 
 const SIGNAL_GROUPS: Readonly<
@@ -55,6 +61,7 @@ const SIGNAL_GROUPS: Readonly<
   Running: { id: "cLYnB3coyuWm6RGawhBT1vjQGu1iZTvjXIM8v8jbIjA=", allowUser: userHasActivitySelected },
   Social: { id: "2CHfRlRQFWrLlFapAsoGW30C+eEKt0+6kSFJYHVu1BM=", allowUser: userHasActivitySelected },
   "Young Members": { id: "WfJ0FbSzOx0wXj//Qc8/jj0bQXsDynIyExZfQIKcDrM=", allowUser: (user) => user.Age < 30 },
+  "Paddlesports": { id: "R27Gzht4wklQIM/BKKgSBwWrLVzlAN/MtN5DXmf23j0=", allowUser: isPaddlesportUser },
 };
 
 const GROUP_REMOVAL_DIRECT_MESSAGE = `Hi! 👋
