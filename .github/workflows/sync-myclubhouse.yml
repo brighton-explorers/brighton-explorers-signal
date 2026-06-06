@@ -46,12 +46,13 @@ jobs:
             "Windsurfing" \
             "Running" \
             "Social" \
-            "Young Members"
+            "Young Members" \
+            "Paddlesports"
         env:
           DRY_RUN: ${{ github.ref == 'refs/heads/main' && 'false' || 'true' }}
           SIGNAL_USER: ${{ secrets.SIGNAL_USER }}
           MYCLUBHOUSE_ACCESS_TOKEN: ${{ secrets.MYCLUBHOUSE_ACCESS_TOKEN }}
-          TRACE: true
+          TRACE: false
           VERBOSE: false
           MAXADDS: "100"
           SHOW_REMOVES: true
