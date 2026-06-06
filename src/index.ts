@@ -191,6 +191,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
 
   // Send read receipts for any messages received
 
+  let readReceiptFails = 0;
   signal.addListener("receive", async (message) => {
     if (message.envelope.dataMessage) {
       const { timestamp, groupInfo } = message.envelope.dataMessage;
@@ -205,6 +206,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
             try {
               await signal.sendReceipt(number, timestamp);
             } catch (error) {
+              readReceiptFails++;
               console.error(
                 `Could not send read receipt to ${DEBUG ? number : "number"} in group ${groupInfo.groupId}:`,
                 error
@@ -236,6 +238,12 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
   //signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, `SyncGroups started ${startDate.toLocaleString()});
 
   let debugMessage = "";
+
+  if(readReceiptFails >0)
+  {
+    debugMessage+=`Send read receipt fails: ${readReceiptFails}\n`;
+    console.log(`Send read receipt fails: ${readReceiptFails}`);
+  }
 
   for (const groupName of groupNames) {
     TRACE && console.log(`Getting groupUsers for "${groupName}"`);
