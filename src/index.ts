@@ -207,7 +207,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
               await signal.sendReceipt(number, timestamp);
             } catch (error) {
               readReceiptFails++;
-              console.error(
+              VERBOSE && console.error(
                 `Could not send read receipt to ${DEBUG ? number : "number"} in group ${groupInfo.groupId}:`,
                 error
               );
@@ -239,7 +239,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
 
   let debugMessage = "";
 
-  if(readReceiptFails >0)
+  //if(readReceiptFails >0)
   {
     debugMessage+=`Send read receipt fails: ${readReceiptFails}\n`;
     console.log(`Send read receipt fails: ${readReceiptFails}`);
