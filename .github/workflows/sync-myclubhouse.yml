@@ -46,8 +46,7 @@ jobs:
             "Windsurfing" \
             "Running" \
             "Social" \
-            "Young Members" \
-            "Paddlesports"
+            "Young Members"
         env:
           DRY_RUN: ${{ github.ref == 'refs/heads/main' && 'false' || 'true' }}
           SIGNAL_USER: ${{ secrets.SIGNAL_USER }}
