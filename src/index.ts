@@ -239,11 +239,17 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
 
   let debugMessage = "";
 
-  //if(readReceiptFails >0)
+  if(readReceiptFails >0)
   {
-    debugMessage+=`Send read receipt fails: ${readReceiptFails}\n`;
-    console.log(`Send read receipt fails: ${readReceiptFails}`);
+    debugMessage+=`⚠️Send read receipt fails: ${readReceiptFails}\n`;
+    console.log(`⚠️Send read receipt fails: ${readReceiptFails}`);
   }
+  else
+  {
+    debugMessage+=`No send read receipt fails\n`;
+    console.log(`No send read receipt fails`);
+  }
+
 
   for (const groupName of groupNames) {
     TRACE && console.log(`Getting groupUsers for "${groupName}"`);
