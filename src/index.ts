@@ -42,18 +42,20 @@ const SIGNAL_GROUPS: Readonly<
   Caving: { id: "cwEah5FIN5kmb/V9mFhj5fsGIWFpfhDGCHqCyKB1ScM=", allowUser: userHasActivitySelected },
   Climbing: { id: "w8AwJdbepA3L9uk0EfSUCV/B55aMb91Wk/QzFe1lJQ4=", allowUser: userHasActivitySelected },
   "Cycling (Road)": { id: "NBDEaOhg0NtcnG60br2wqStuMErd+WzIyLjign/WZu8=", allowUser: userHasActivitySelected },
-  Kayaking: {
-    id: "lpO3ITpYHYUTpurgBfCU4+b1VFKXSybxDHmxtTcctKc=",
-    allowUser: (user, activityName) =>
-      userHasActivitySelected(user, activityName) && Boolean(user.Attributes["Kayaking induction"]),
-  },
+  // Kayaking: {
+  //   id: "lpO3ITpYHYUTpurgBfCU4+b1VFKXSybxDHmxtTcctKc=",
+  //   allowUser: (user, activityName) =>
+  //     userHasActivitySelected(user, activityName) && Boolean(user.Attributes["Kayaking induction"]),
+  // },
+  Kayaking: { id: "lpO3ITpYHYUTpurgBfCU4+b1VFKXSybxDHmxtTcctKc=", allowUser: () => false }, //deprecated
   "Mountain Biking": { id: "qBoUTmPas3r1cosXWtRGjHBGfFCoHR49boSTUv2Jo88=", allowUser: userHasActivitySelected },
   "Mountain Sports": { id: "uReIWxXU2qjhrBU66mTQgnId1FGjCy9H2VProk+xyQk=", allowUser: userHasActivitySelected },
-  "Stand Up Paddleboarding (SUP)": {
-    id: "Wg3hY3TnQANxXrufiA7ucgOgcBDW6DVjneDLeI+urEE=",
-    allowUser: (user, activityName) =>
-      userHasActivitySelected(user, activityName) && Boolean(user.Attributes["SUP induction"]),
-  },
+  // "Stand Up Paddleboarding (SUP)": {
+  //   id: "Wg3hY3TnQANxXrufiA7ucgOgcBDW6DVjneDLeI+urEE=",
+  //   allowUser: (user, activityName) =>
+  //     userHasActivitySelected(user, activityName) && Boolean(user.Attributes["SUP induction"]),
+  // },
+  "Stand Up Paddleboarding (SUP)": { id: "Wg3hY3TnQANxXrufiA7ucgOgcBDW6DVjneDLeI+urEE=", allowUser: () => false }, //deprecated
   Surfing: { id: "u0T8evlaYze+apskNR9Bj+b4nyNfjl04bIn/urNiTdM=", allowUser: userHasActivitySelected },
   Tennis: { id: "F49SXaZVkGkyzFhSYvEZxK5GXX4CqEZt9zcYToRjA1c=", allowUser: userHasActivitySelected },
   Walking: { id: "hYgu8Lu7JVPE1sSP9JooUn7/PvSV9SQhwg8IzkQcTFE=", allowUser: userHasActivitySelected },
