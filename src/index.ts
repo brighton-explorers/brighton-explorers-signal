@@ -1,3 +1,4 @@
+// This comment updated 01/10/26 and code pushed to stop Github actions stopping due to inactivity
 import "log-timestamp";
 import { argv } from "process";
 import { DEBUG, DRY_RUN, TRACE, VERBOSE, SHOW_REMOVES } from "./env.js";
@@ -12,9 +13,9 @@ function userHasActivitySelected(user: MyClubhouseUser, activityName: SignalGrou
 }
 
 function isPaddlesportUser(user: MyClubhouseUser, activityName: SignalGroupName): boolean {
-  return (user.Attributes.Activities ?? [])?.some((activityPreference) => 
-    activityPreference === "Kayaking" || 
-    activityPreference === "Stand Up Paddleboarding (SUP)" );
+  return (user.Attributes.Activities ?? [])?.some((activityPreference) =>
+    activityPreference === "Kayaking" ||
+    activityPreference === "Stand Up Paddleboarding (SUP)");
 }
 
 const SIGNAL_GROUPS: Readonly<
@@ -23,7 +24,7 @@ const SIGNAL_GROUPS: Readonly<
   Debug: {
     id: "OStg3hugH5JZ3qh4CMno3REzVnZaLw3F1uF939HlE3I=",
     allowUser: () => false, // no members
-  },  
+  },
   Committee: {
     id: "jkhJAZMMjA8eHDyrCDOC3d8D+L1DKhacSa0GF+UDyFM=",
     allowUser: (user) =>
@@ -93,7 +94,7 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
   }
 
   // Set group permissions
-  TRACE && console.log(`existingGroup: name=${existingGroup.name} permissionAddMember=${existingGroup.permissionAddMember}, permissionEditDetails=${existingGroup.permissionEditDetails}, groupInviteLink=${existingGroup.groupInviteLink==null ? "null":"valid"}`);
+  TRACE && console.log(`existingGroup: name=${existingGroup.name} permissionAddMember=${existingGroup.permissionAddMember}, permissionEditDetails=${existingGroup.permissionEditDetails}, groupInviteLink=${existingGroup.groupInviteLink == null ? "null" : "valid"}`);
   if (
     existingGroup.permissionAddMember !== "ONLY_ADMINS" ||
     existingGroup.permissionEditDetails !== "ONLY_ADMINS" ||
@@ -101,7 +102,7 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
   ) {
     VERBOSE && console.log(`Updating group permissions for "${groupName}" (${group.id})`);
     if (!DRY_RUN) {
-      try{
+      try {
         await signal.setGroupPermissions(group.id, {
           permissions: {
             setPermissionAddMember: "only-admins",
@@ -152,8 +153,7 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
     !DRY_RUN && (await signal.removeNumbersFromGroup(group.id, numbersToRemove));
     numbersToRemove.forEach((number) => numbersRemoved.add(number));
   }
-  else
-  {
+  else {
     VERBOSE && console.log(`No numbers to remove from group "${groupName}" (${group.id})`);
   }
 
@@ -165,18 +165,17 @@ async function setupGroup(signal: Signal, groupName: keyof typeof SIGNAL_GROUPS,
     );
 
     if (!DRY_RUN) {
-      const { numbersAdded: _numbersAdded, numbersTimedOut: _numbersTimedOut, numbersFailed: _numbersFailed, numbersNotOnSignal: _numbersNotOnSignal } = 
-      await signal.addNumbersToGroup(group.id, numbersToAdd, groupIDsByNumber);
+      const { numbersAdded: _numbersAdded, numbersTimedOut: _numbersTimedOut, numbersFailed: _numbersFailed, numbersNotOnSignal: _numbersNotOnSignal } =
+        await signal.addNumbersToGroup(group.id, numbersToAdd, groupIDsByNumber);
       numbersAdded = _numbersAdded;
       numbersTimedOut = _numbersTimedOut;
       numbersFailed = _numbersFailed;
       numbersNotOnSignal = _numbersNotOnSignal;
       //unregisteredNumbers =
-        //(await signal.addNumbersToGroup(group.id, numbersToAdd, groupIDsByNumber))?.unregisteredNumbers ?? unregisteredNumbers;
+      //(await signal.addNumbersToGroup(group.id, numbersToAdd, groupIDsByNumber))?.unregisteredNumbers ?? unregisteredNumbers;
     }
   }
-  else
-  {
+  else {
     VERBOSE && console.log(`No numbers to add to group "${groupName}" (${group.id})`);
   }
 
@@ -226,7 +225,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
 
   const activeUsers = await getActiveUsers();
   TRACE && console.log(`${activeUsers.length} activeUsers`);
-    
+
   // Allow some time for any group updates to come in
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
@@ -241,14 +240,12 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
 
   let debugMessage = "";
 
-  if(readReceiptFails >0)
-  {
-    debugMessage+=`⚠️Send read receipt fails: ${readReceiptFails}\n`;
+  if (readReceiptFails > 0) {
+    debugMessage += `⚠️Send read receipt fails: ${readReceiptFails}\n`;
     console.log(`⚠️Send read receipt fails: ${readReceiptFails}`);
   }
-  else
-  {
-    debugMessage+=`No send read receipt fails\n`;
+  else {
+    debugMessage += `No send read receipt fails\n`;
     console.log(`No send read receipt fails`);
   }
 
@@ -265,33 +262,28 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
       .filter((number) => !allNumbersNotOnSignal.has(number));
 
     // map of MembershipNumbers by phone nember for debug logging
-    let groupIDsByNumber =  new Map<string, string>();
-    for(const member of groupUsers)
-    {
+    let groupIDsByNumber = new Map<string, string>();
+    for (const member of groupUsers) {
       let number = userPhoneNumber(member);
-      if(number != null && groupNumbers.includes(number))
-      {
+      if (number != null && groupNumbers.includes(number)) {
         groupIDsByNumber.set(number, member.MembershipNumber);
       }
     }
 
-    try
-    {
+    try {
       const { numbersAdded, numbersRemoved, numbersTimedOut, numbersFailed, numbersNotOnSignal } = await setupGroup(signal, groupName, groupNumbers, groupIDsByNumber);
       numbersAdded.forEach((number) => numbersAddedToGroups.add(number));
       numbersRemoved.forEach((number) => numbersRemovedFromGroups.add(number));
       numbersNotOnSignal.forEach((number) => allNumbersNotOnSignal.add(number));
-      debugMessage+= `${groupName}: ${numbersAdded.size}a, ${numbersRemoved.size}r, ${numbersTimedOut.size}t, ${numbersFailed.size}f, ${numbersNotOnSignal.size}n, \n`;
-      if(SHOW_REMOVES && numbersRemoved.size>0)
-      {
-        debugMessage+="Removed: " ;
-        numbersRemoved.forEach(number => debugMessage+=(number+", "));
-        debugMessage+= "\n";
+      debugMessage += `${groupName}: ${numbersAdded.size}a, ${numbersRemoved.size}r, ${numbersTimedOut.size}t, ${numbersFailed.size}f, ${numbersNotOnSignal.size}n, \n`;
+      if (SHOW_REMOVES && numbersRemoved.size > 0) {
+        debugMessage += "Removed: ";
+        numbersRemoved.forEach(number => debugMessage += (number + ", "));
+        debugMessage += "\n";
       }
     }
-    catch(error)
-    {
-        console.warn(`setupGroup(${groupName} failed): ${error}`);
+    catch (error) {
+      console.warn(`setupGroup(${groupName} failed): ${error}`);
     }
   }
 
@@ -318,7 +310,7 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
           .filter((number): number is string => Boolean(number)) ?? []
     )
 
-    
+
   );
   console.log(
     `${knownSignalNumbers.size} Signal users out of ${activeUsers.length} total active members (${Math.round(
@@ -328,9 +320,9 @@ async function syncGroups(...groupNames: SignalGroupName[]) {
 
   await new Promise((resolve) => setTimeout(resolve, 250)); // Avoid rate limiting
   const endDate = new Date();
-  const elapsedSeconds = Math.floor((endDate.getTime()-startDate.getTime())/1000);
-  const signalDebugMessage = `SyncGroups started ${startDate.toLocaleString()}. Completed in ${Math.floor(elapsedSeconds/60)}:${elapsedSeconds%60}\n${debugMessage}`;
-  signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, signalDebugMessage);    
+  const elapsedSeconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+  const signalDebugMessage = `SyncGroups started ${startDate.toLocaleString()}. Completed in ${Math.floor(elapsedSeconds / 60)}:${elapsedSeconds % 60}\n${debugMessage}`;
+  signal.sendMessageToGroup(SIGNAL_GROUPS["Debug"].id, signalDebugMessage);
   //console.log(signalDebugMessage);
 
   signal.close();
